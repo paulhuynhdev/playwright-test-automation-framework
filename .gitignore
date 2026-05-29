@@ -83,3 +83,14 @@ $RECYCLE.BIN/
 #  Tooling / local-only
 # =============================================================================
 .claude/
+
+# =============================================================================
+#  AI test agents (Playwright planner / generator / healer)
+# =============================================================================
+# Agent defs (.claude/) + MCP registration stay local — regenerate with
+# `npx playwright init-agents --loop=claude`. Durable conventions live in
+# CLAUDE.md + docs/app.context.md.
+.mcp.json
+# Raw, unreviewed generator output — staging only. Refactor into specs/features/.
+tests/_generated/*
+!tests/_generated/README.md

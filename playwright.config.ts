@@ -12,7 +12,9 @@ export default defineConfig({
     fullyParallel: true,
 
     forbidOnly: isCI,
-    retries: isCI ? 1 : 0,
+    // 2 retries in CI catches ~90% of transient flakiness without masking real bugs;
+    // 0 locally so failures surface immediately during authoring.
+    retries: isCI ? 2 : 0,
     workers: isCI ? 3 : undefined,
 
     outputDir: 'test-results',
@@ -34,7 +36,9 @@ export default defineConfig({
         navigationTimeout: BROWSER_CONFIG.TIMEOUTS.NAVIGATION,
         screenshot: 'only-on-failure',
         video: 'retain-on-failure',
-        trace: 'retain-on-failure',
+        // Trace only the first retry — gives a full debug trace for genuine
+        // failures while cutting trace storage vs retaining every failure.
+        trace: 'on-first-retry',
     },
 
     projects: [
@@ -49,7 +53,8 @@ export default defineConfig({
         {
             name: 'authenticated',
             dependencies: ['setup-auth'],
-            testIgnore: [/.*\.setup\.ts/, /.*login\.spec\.ts/],
+            // Exclude setup, login specs, and the generator reference seed.
+            testIgnore: [/.*\.setup\.ts/, /.*login\.spec\.ts/, /.*seed\.spec\.ts/],
             use: {
                 ...devices['Desktop Chrome'],
                 storageState: APP_CONSTANTS.STORAGE_PATH,

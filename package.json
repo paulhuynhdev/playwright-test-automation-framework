@@ -42,6 +42,8 @@
     "test:critical": "playwright test --grep @critical",
     "test:negative": "playwright test --grep @negative",
     "test:rbac": "playwright test --grep @rbac",
+    "test:ai": "playwright test --grep @ai-generated",
+    "test:trusted": "playwright test --grep-invert @ai-generated",
     "report": "playwright show-report",
     "allure:generate": "allure generate allure-results --clean -o allure-report",
     "allure:open": "allure open allure-report",

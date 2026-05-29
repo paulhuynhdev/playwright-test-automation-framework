@@ -15,33 +15,18 @@ export class Wait {
        Page / Navigation
     ---------------------------- */
 
-    /**
-     * Waits until the page has no ongoing network requests
-     * Best used after navigation or login redirects
-     */
     static async forNetworkIdle(page: Page, timeout = 10_000): Promise<void> {
         await page.waitForLoadState('networkidle', { timeout });
     }
 
-    /**
-     * Waits until DOM content is fully loaded
-     * Faster than networkidle for SPA apps
-     */
     static async forDomContentLoaded(page: Page, timeout = 10_000): Promise<void> {
         await page.waitForLoadState('domcontentloaded', { timeout });
     }
 
-    /**
-     * Waits until the page reaches full load state
-     */
     static async forPageLoad(page: Page, timeout = 10_000): Promise<void> {
         await page.waitForLoadState('load', { timeout });
     }
 
-    /**
-     * Waits until the URL matches or contains expected value
-     * Best for redirect verification
-     */
     static async forURL(
         page: Page,
         urlPart: string | RegExp,
@@ -54,9 +39,6 @@ export class Wait {
        Locator / Element
     ---------------------------- */
 
-    /**
-     * Waits until an element becomes visible
-     */
     static async forVisible(
         locator: Locator,
         timeout = 10_000
@@ -64,9 +46,6 @@ export class Wait {
         await locator.waitFor({ state: 'visible', timeout });
     }
 
-    /**
-     * Waits until an element is hidden or removed
-     */
     static async forHidden(
         locator: Locator,
         timeout = 10_000
@@ -75,9 +54,6 @@ export class Wait {
     }
 
 
-    /**
-     * Waits until an element is detached from the DOM
-     */
     static async forDetached(
         locator: Locator,
         timeout = 10_000
@@ -85,9 +61,6 @@ export class Wait {
         await locator.waitFor({ state: 'detached', timeout });
     }
 
-    /**
-     * Waits until an element becomes enabled (not disabled)
-     */
     static async forEnabled(
         locator: Locator,
         timeout = 10_000
@@ -95,9 +68,6 @@ export class Wait {
         await expect(locator).toBeEnabled({ timeout });
     }
 
-    /**
-     * Waits until an element becomes disabled
-     */
     static async forDisabled(
         locator: Locator,
         timeout = 10_000
@@ -109,9 +79,6 @@ export class Wait {
        Assertions (Wait + Verify)
     ---------------------------- */
 
-    /**
-     * Waits until text is present in element
-     */
     static async forText(
         locator: Locator,
         text: string | RegExp,
@@ -120,9 +87,6 @@ export class Wait {
         await expect(locator).toHaveText(text, { timeout });
     }
 
-    /**
-     * Waits until element count matches expected value
-     */
     static async forCount(
         locator: Locator,
         count: number,
