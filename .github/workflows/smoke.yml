@@ -48,7 +48,9 @@ jobs:
             npx playwright install-deps chromium
           fi
 
-      - name: Run smoke tests
+      # Trusted gate: @smoke minus unreviewed AI tests (@ai-generated). Must be 100% green.
+      # AI tests join this gate only after review removes their @ai-generated tag.
+      - name: Run smoke tests (trusted)
         env:
           CI: true
           BASE_URL: ${{ secrets.BASE_URL || 'https://practicesoftwaretesting.com' }}
@@ -56,7 +58,7 @@ jobs:
           USER_PASSWORD: ${{ secrets.USER_PASSWORD || 'welcome01' }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL || 'admin@practicesoftwaretesting.com' }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'welcome01' }}
-        run: npm run test:smoke
+        run: npx playwright test --grep @smoke --grep-invert @ai-generated
 
       - name: Upload Playwright HTML report
         if: always()

@@ -92,6 +92,63 @@ jobs:
           path: test-results/
           retention-days: 14
 
+  # Non-blocking reliability signal for unreviewed AI-authored tests (@ai-generated).
+  # Surfaces flakiness without gating the pipeline; promote a test by removing
+  # @ai-generated after human review. Target SLA: <15% flaky.
+  ai-generated-signal:
+    name: AI-generated tests (signal only, non-blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright browsers
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" != "true" ]; then
+            npx playwright install --with-deps chromium
+          else
+            npx playwright install-deps chromium
+          fi
+
+      - name: Run AI-generated tests
+        env:
+          CI: true
+          BASE_URL: ${{ secrets.BASE_URL || 'https://practicesoftwaretesting.com' }}
+          USER_EMAIL: ${{ secrets.USER_EMAIL || 'customer@practicesoftwaretesting.com' }}
+          USER_PASSWORD: ${{ secrets.USER_PASSWORD || 'welcome01' }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL || 'admin@practicesoftwaretesting.com' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'welcome01' }}
+        run: npm run test:ai
+
+      - name: Upload AI-test report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-ai-generated
+          path: playwright-report/
+          retention-days: 14
+
   merge-report:
     name: Merge Allure & summary
     needs: regression
