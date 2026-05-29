@@ -1,6 +1,5 @@
 /**
- * User Role Definitions
- * Enterprise Standard: Constant Objects (not enums)
+ * Constant Objects (not enums): erasable-syntax safe, tree-shakeable, no runtime enum codegen.
  */
 export const USER_ROLES = {
     USER: 'user',

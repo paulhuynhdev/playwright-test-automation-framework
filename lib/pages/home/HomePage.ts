@@ -39,6 +39,19 @@ export class HomePage extends BasePage {
         await this.click(this.searchSubmit);
     }
 
+    /**
+     * Open the first product in the grid and wait for its detail data to load.
+     * @remarks Register the `GET /products/:id` wait BEFORE the click so the detail fetch
+     * can't resolve between click and listener (web-first; no fixed timeout).
+     */
+    async openFirstProduct() {
+        const detailLoaded = this.page.waitForResponse(
+            (r) => /\/products\/[^/?]+/.test(r.url()) && r.request().method() === 'GET'
+        );
+        await this.click(this.productGrid.first());
+        await detailLoaded;
+    }
+
     /* ---------------------------
        Assertions
     ---------------------------- */
@@ -49,8 +62,13 @@ export class HomePage extends BasePage {
         Logger.success(MESSAGES.HOME_LOADED);
     }
 
+    /**
+     * Assert an authenticated session is active.
+     * @remarks Post-login the SPA redirects client-side and the top-nav swaps the sign-in
+     * link for the user menu (`[data-test="nav-menu"]`). Assert on that element, not on the
+     * URL — navigation may not have settled when the assertion runs.
+     */
     async verifyAuthenticated() {
-        // After login the top-nav exposes the username, not the sign-in link.
         await this.expectVisible(this.navMenu);
     }
 }

@@ -1,7 +1,6 @@
 import { test as baseTest } from './base.fixture';
 import { LoginPage } from '../pages/auth/LoginPage';
 import { HomePage } from '../pages/home/HomePage';
-import { URLS } from '../../config/urls';
 import { USERS } from '../data/users';
 import { USER_ROLES, type UserRole } from '../data/constants/roles';
 import { Logger } from '../utils/Logger';
@@ -32,9 +31,10 @@ export const test = baseTest.extend<AuthFixtures>({
             Logger.step(`Logging in as ${role}`);
             await loginPage.openLoginPage();
 
-            // Idempotent: if a persisted session already redirected us past
-            // the login form, skip the credential flow.
-            if (page.url().includes(URLS.LOGIN)) {
+            // Idempotent + race-free: decide by element state, not URL. A persisted
+            // session client-redirects off /auth/login, and a point-in-time url() read
+            // can win that race — then we'd fill a detaching form and flake.
+            if (await loginPage.isLoginRequired()) {
                 await loginPage.login(user.email, user.password);
             } else {
                 Logger.info(`Existing session detected — skipping login as ${role}`);
@@ -44,12 +44,18 @@ export const test = baseTest.extend<AuthFixtures>({
 
     userPage: async ({ page, loginAs }, use) => {
         await loginAs(USER_ROLES.USER);
-        await use(new HomePage(page));
+        const home = new HomePage(page);
+        // Post-condition: confirm the session is actually established before handing
+        // the page object to the test — turns a silent auth race into a clear failure.
+        await home.verifyAuthenticated();
+        await use(home);
     },
 
     adminPage: async ({ page, loginAs }, use) => {
         await loginAs(USER_ROLES.ADMIN);
-        await use(new HomePage(page));
+        const home = new HomePage(page);
+        await home.verifyAuthenticated();
+        await use(home);
     },
 });
 

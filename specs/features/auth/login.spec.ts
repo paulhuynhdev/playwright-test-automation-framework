@@ -152,6 +152,67 @@ test.describe('Login Tests - Negative Scenarios', () => {
     );
 });
 
+test.describe('Login Tests - Validation Scenarios', () => {
+    test(
+        'AUTH-104: Login is rejected with empty email',
+        { tag: ['@regression', '@validation'] },
+        async ({ loginPage }, testInfo) => {
+            testInfo.annotations.push(
+                { type: 'severity', description: 'normal' },
+                { type: 'feature', description: 'Authentication' },
+                { type: 'story', description: 'AUTH-104: Empty Email' }
+            );
+
+            Logger.step('Step 1: Submit with empty email, password filled');
+            await loginPage.attemptLogin('', 'welcome01');
+
+            Logger.step('Step 2: Verify submission rejected (still on login form)');
+            await loginPage.verifyStillOnLoginForm();
+
+            Logger.info('✅ Empty email rejected');
+        }
+    );
+
+    test(
+        'AUTH-105: Login is rejected with empty password',
+        { tag: ['@regression', '@validation'] },
+        async ({ loginPage }, testInfo) => {
+            testInfo.annotations.push(
+                { type: 'severity', description: 'normal' },
+                { type: 'feature', description: 'Authentication' },
+                { type: 'story', description: 'AUTH-105: Empty Password' }
+            );
+
+            Logger.step('Step 1: Submit with email filled, empty password');
+            await loginPage.attemptLogin('customer@practicesoftwaretesting.com', '');
+
+            Logger.step('Step 2: Verify submission rejected (still on login form)');
+            await loginPage.verifyStillOnLoginForm();
+
+            Logger.info('✅ Empty password rejected');
+        }
+    );
+
+    test(
+        'AUTH-106: Login is rejected with both fields empty',
+        { tag: ['@regression', '@validation'] },
+        async ({ loginPage }, testInfo) => {
+            testInfo.annotations.push(
+                { type: 'severity', description: 'normal' },
+                { type: 'feature', description: 'Authentication' }
+            );
+
+            Logger.step('Step 1: Submit with both fields empty');
+            await loginPage.attemptLogin('', '');
+
+            Logger.step('Step 2: Verify submission rejected (still on login form)');
+            await loginPage.verifyStillOnLoginForm();
+
+            Logger.info('✅ Empty credentials rejected');
+        }
+    );
+});
+
 test.describe('Login Tests - Role-Based Access', () => {
     test(
         'ROLE-001: Customer session loads home',

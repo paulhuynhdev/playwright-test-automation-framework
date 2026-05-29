@@ -31,12 +31,11 @@ export abstract class BasePage {
     async stableFill(locator: Locator, value: string) {
         await locator.waitFor({ state: 'visible' });
 
-        // Clear using real keyboard (safe)
+        // Clear via real keyboard events; .fill() can desync framework-controlled inputs
         await locator.click();
         await locator.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A');
         await locator.press('Backspace');
 
-        // Type sequentially (non-deprecated)
         await locator.pressSequentially(value, { delay: 80 });
 
         // Hard assertion — prevents silent failures

@@ -35,7 +35,6 @@ const ADMIN_PASSWORD = getRequiredVar('ADMIN_PASSWORD');
 export const ENV = {
     BASE_URL,
 
-    // Flat access
     USER_EMAIL,
     USER_PASSWORD,
     ADMIN_EMAIL,
