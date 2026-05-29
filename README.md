@@ -183,6 +183,8 @@ Or just `npx playwright test` and Playwright resolves dependencies automatically
 | `npm run test:critical`      | `@critical` business scenarios                            |
 | `npm run test:negative`      | Negative-path tests                                       |
 | `npm run test:rbac`          | Role-based access checks                                  |
+| `npm run test:ai`            | `@ai-generated` only — unreviewed AI-authored tests       |
+| `npm run test:trusted`       | Everything except `@ai-generated` (human-reviewed suite)  |
 | `npm run test:headed`        | Headed browser                                            |
 | `npm run test:ui`            | Playwright UI mode                                        |
 | `npm run test:debug`         | Inspector mode                                            |
@@ -205,6 +207,7 @@ Every test carries at least one tag so suites can be sliced freely:
 | `@negative`   | Negative-path / error-handling                         |
 | `@validation` | Form-validation scenarios                              |
 | `@rbac`       | Role-based access control                              |
+| `@ai-generated` | AI-authored, not yet human-reviewed (excluded from trusted gate) |
 
 Combine via Playwright `--grep`:
 
