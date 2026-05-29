@@ -15,10 +15,10 @@ If you discover a security vulnerability in this repository, **please do not
 open a public GitHub issue**. Instead, report it privately so we can address
 it before disclosure.
 
-**Preferred channel:** [GitHub Security Advisories](https://github.com/aeshamangukiya/playwright-test-automation-framework/security/advisories/new)
+**Preferred channel:** [GitHub Security Advisories](https://github.com/paulhuynhdev/playwright-test-automation-framework/security/advisories/new)
 
 Alternatively, email the maintainer at the address shown on the
-[GitHub profile](https://github.com/aeshamangukiya).
+[GitHub profile](https://github.com/paulhuynhdev).
 
 Please include:
 

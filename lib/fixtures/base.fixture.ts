@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import { LoginPage } from '../pages/auth/LoginPage';
-import { DashboardPage } from '../pages/dashboard/DashboardPage';
+import { HomePage } from '../pages/home/HomePage';
 
 /**
  * Base Fixture
@@ -8,15 +8,15 @@ import { DashboardPage } from '../pages/dashboard/DashboardPage';
  * Provides ready-to-use Page Object instances for every test.
  *
  * Every test importing `test` from `lib/fixtures` automatically gets:
- *   - `loginPage`      — `LoginPage` bound to the current `page`
- *   - `dashboardPage`  — `DashboardPage` bound to the current `page`
+ *   - `loginPage` — `LoginPage` bound to the current `page`
+ *   - `homePage`  — `HomePage` bound to the current `page`
  *
  * Keep this fixture free of authentication or business logic; that belongs
  * in `auth.fixture.ts` and `lib/helpers/*` respectively.
  */
 type BaseFixtures = {
     loginPage: LoginPage;
-    dashboardPage: DashboardPage;
+    homePage: HomePage;
 };
 
 export const test = base.extend<BaseFixtures>({
@@ -24,8 +24,8 @@ export const test = base.extend<BaseFixtures>({
         await use(new LoginPage(page));
     },
 
-    dashboardPage: async ({ page }, use) => {
-        await use(new DashboardPage(page));
+    homePage: async ({ page }, use) => {
+        await use(new HomePage(page));
     },
 });
 

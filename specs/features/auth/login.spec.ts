@@ -1,42 +1,38 @@
 import { test } from '../../../lib/fixtures';
 import { USER_ROLES } from '../../../lib/data/constants/roles';
-import { DashboardPage } from '../../../lib/pages/dashboard/DashboardPage';
+import { HomePage } from '../../../lib/pages/home/HomePage';
 import { Logger } from '../../../lib/utils/Logger';
 import { MESSAGES } from '../../../lib/data/constants/messages';
 import { USERS } from '../../../lib/data/users';
 
 /**
- * Login Test Suite - Comprehensive Demo
- * 
- * This suite demonstrates all possible login scenarios for OrangeHRM demo application.
- * It covers:
- * - Successful login for User and Admin roles
- * - Validation of credentials
- * - Error handling
- * - Edge cases
- * 
- * Purpose: GitHub Demo & Reference Implementation
+ * Login Test Suite — Practice Software Testing toolshop
+ *
+ * Covers:
+ * - Successful login for Customer (User) and Admin roles
+ * - Invalid credentials handling
+ * - Role-based session smoke
  */
 
 test.describe('Login Tests - Positive Scenarios', () => {
     test(
-        'USER-001: User can login successfully with valid credentials',
+        'USER-001: Customer can login successfully with valid credentials',
         { tag: ['@smoke', '@regression', '@critical'] },
         async ({ loginAs, page }, testInfo) => {
             testInfo.annotations.push(
                 { type: 'severity', description: 'critical' },
                 { type: 'feature', description: 'Authentication' },
-                { type: 'story', description: 'USER-001: User Login' }
+                { type: 'story', description: 'USER-001: Customer Login' }
             );
 
-            Logger.step('Step 1: Login as standard User role');
+            Logger.step('Step 1: Login as customer role');
             await loginAs(USER_ROLES.USER);
 
-            Logger.step('Step 2: Verify Dashboard is loaded successfully');
-            const dashboard = new DashboardPage(page);
-            await dashboard.verifyDashboardLoaded();
+            Logger.step('Step 2: Verify authenticated home page');
+            const home = new HomePage(page);
+            await home.verifyAuthenticated();
 
-            Logger.info('✅ User login successful - Dashboard accessible');
+            Logger.info('✅ Customer login successful');
         }
     );
 
@@ -50,19 +46,19 @@ test.describe('Login Tests - Positive Scenarios', () => {
                 { type: 'story', description: 'ADMIN-001: Admin Login' }
             );
 
-            Logger.step('Step 1: Login as Admin role');
+            Logger.step('Step 1: Login as admin role');
             await loginAs(USER_ROLES.ADMIN);
 
-            Logger.step('Step 2: Verify Dashboard is loaded successfully');
-            const dashboard = new DashboardPage(page);
-            await dashboard.verifyDashboardLoaded();
+            Logger.step('Step 2: Verify authenticated session');
+            const home = new HomePage(page);
+            await home.verifyAuthenticated();
 
-            Logger.info('✅ Admin login successful - Dashboard accessible');
+            Logger.info('✅ Admin login successful');
         }
     );
 
     test(
-        'AUTH-003: User can login directly using login page',
+        'AUTH-003: User can login directly via login page',
         { tag: ['@regression'] },
         async ({ loginPage, page }, testInfo) => {
             testInfo.annotations.push(
@@ -70,43 +66,43 @@ test.describe('Login Tests - Positive Scenarios', () => {
                 { type: 'feature', description: 'Authentication' }
             );
 
-            Logger.step('Step 1: Navigate to login page');
+            Logger.step('Step 1: Open login page');
             await loginPage.openLoginPage();
 
-            Logger.step('Step 2: Enter valid user credentials');
+            Logger.step('Step 2: Submit valid credentials');
             const user = USERS[USER_ROLES.USER];
-            await loginPage.login(user.username, user.password);
+            await loginPage.login(user.email, user.password);
 
-            Logger.step('Step 3: Verify successful login');
-            const dashboard = new DashboardPage(page);
-            await dashboard.verifyDashboardLoaded();
+            Logger.step('Step 3: Verify post-login state');
+            const home = new HomePage(page);
+            await home.verifyAuthenticated();
 
-            Logger.info('✅ Direct login through LoginPage works correctly');
+            Logger.info('✅ Direct login through LoginPage works');
         }
     );
 });
 
 test.describe('Login Tests - Negative Scenarios', () => {
     test(
-        'AUTH-101: Login fails with invalid username',
+        'AUTH-101: Login fails with invalid email',
         { tag: ['@regression', '@negative'] },
         async ({ loginPage }, testInfo) => {
             testInfo.annotations.push(
                 { type: 'severity', description: 'normal' },
                 { type: 'feature', description: 'Authentication' },
-                { type: 'story', description: 'AUTH-101: Invalid Username' }
+                { type: 'story', description: 'AUTH-101: Invalid Email' }
             );
 
-            Logger.step('Step 1: Navigate to login page');
+            Logger.step('Step 1: Open login page');
             await loginPage.openLoginPage();
 
-            Logger.step('Step 2: Attempt login with invalid username');
-            await loginPage.login('InvalidUser123', 'admin123');
+            Logger.step('Step 2: Submit unknown email');
+            await loginPage.login('nobody@example.com', 'welcome01');
 
-            Logger.step('Step 3: Verify error message is displayed');
+            Logger.step('Step 3: Verify error');
             await loginPage.verifyErrorMessage(MESSAGES.LOGIN_FAILED);
 
-            Logger.info('✅ Invalid username correctly rejected');
+            Logger.info('✅ Invalid email rejected');
         }
     );
 
@@ -120,21 +116,21 @@ test.describe('Login Tests - Negative Scenarios', () => {
                 { type: 'story', description: 'AUTH-102: Invalid Password' }
             );
 
-            Logger.step('Step 1: Navigate to login page');
+            Logger.step('Step 1: Open login page');
             await loginPage.openLoginPage();
 
-            Logger.step('Step 2: Attempt login with valid username but invalid password');
-            await loginPage.login('Admin', 'WrongPassword123!');
+            Logger.step('Step 2: Submit known email with wrong password');
+            await loginPage.login('customer@practicesoftwaretesting.com', 'WrongPassword123!');
 
-            Logger.step('Step 3: Verify error message is displayed');
+            Logger.step('Step 3: Verify error');
             await loginPage.verifyErrorMessage(MESSAGES.LOGIN_FAILED);
 
-            Logger.info('✅ Invalid password correctly rejected');
+            Logger.info('✅ Invalid password rejected');
         }
     );
 
     test(
-        'AUTH-103: Login fails with both invalid credentials',
+        'AUTH-103: Login fails with both credentials invalid',
         { tag: ['@regression', '@negative'] },
         async ({ loginPage }, testInfo) => {
             testInfo.annotations.push(
@@ -142,127 +138,46 @@ test.describe('Login Tests - Negative Scenarios', () => {
                 { type: 'feature', description: 'Authentication' }
             );
 
-            Logger.step('Step 1: Navigate to login page');
+            Logger.step('Step 1: Open login page');
             await loginPage.openLoginPage();
 
-            Logger.step('Step 2: Attempt login with completely invalid credentials');
-            await loginPage.login('InvalidUser', 'InvalidPass');
+            Logger.step('Step 2: Submit invalid email and password');
+            await loginPage.login('nobody@example.com', 'WrongPassword123!');
 
-            Logger.step('Step 3: Verify error message is displayed');
+            Logger.step('Step 3: Verify error');
             await loginPage.verifyErrorMessage(MESSAGES.LOGIN_FAILED);
 
-            Logger.info('✅ Invalid credentials correctly rejected');
-        }
-    );
-
-    test(
-        'AUTH-104: Login fails with empty username',
-        { tag: ['@regression', '@validation'] },
-        async ({ loginPage }, testInfo) => {
-            testInfo.annotations.push(
-                { type: 'severity', description: 'normal' },
-                { type: 'feature', description: 'Authentication' },
-                { type: 'story', description: 'AUTH-104: Empty Username Validation' }
-            );
-
-            Logger.step('Step 1: Navigate to login page');
-            await loginPage.openLoginPage();
-
-            Logger.step('Step 2: Attempt login with empty username');
-            await loginPage.login('', 'admin123');
-
-            await loginPage.verifyErrorMessage(MESSAGES.REQUIRED);
-
-            Logger.info('✅ Empty username validation working');
-        }
-    );
-
-    test(
-        'AUTH-105: Login fails with empty password',
-        { tag: ['@regression', '@validation'] },
-        async ({ loginPage }, testInfo) => {
-            testInfo.annotations.push(
-                { type: 'severity', description: 'normal' },
-                { type: 'feature', description: 'Authentication' }
-            );
-
-            Logger.step('Step 1: Navigate to login page');
-            await loginPage.openLoginPage();
-
-            Logger.step('Step 2: Attempt login with empty password');
-            await loginPage.login('Admin', '');
-
-            await loginPage.verifyErrorMessage(MESSAGES.REQUIRED);
-
-            Logger.info('✅ Empty password validation working');
-        }
-    );
-
-    test(
-        'AUTH-106: Login fails with both fields empty',
-        { tag: ['@regression', '@validation'] },
-        async ({ loginPage }, testInfo) => {
-            testInfo.annotations.push(
-                { type: 'severity', description: 'normal' },
-                { type: 'feature', description: 'Authentication' }
-            );
-
-            Logger.step('Step 1: Navigate to login page');
-            await loginPage.openLoginPage();
-
-            Logger.step('Step 2: Attempt login with both fields empty');
-            await loginPage.login('', '');
-
-            await loginPage.verifyErrorMessage(MESSAGES.REQUIRED);
-
-            Logger.info('✅ Empty fields validation working');
+            Logger.info('✅ Invalid credentials rejected');
         }
     );
 });
 
 test.describe('Login Tests - Role-Based Access', () => {
     test(
-        'ROLE-001: User and Admin have different access levels',
+        'ROLE-001: Customer session loads home',
         { tag: ['@regression', '@rbac'] },
-        async ({ loginAs, page }, testInfo) => {
-            testInfo.annotations.push(
-                { type: 'severity', description: 'normal' },
-                { type: 'feature', description: 'Role-Based Access Control' }
-            );
-
-            Logger.step('Step 1: Login as User');
+        async ({ loginAs, page }) => {
+            Logger.step('Step 1: Login as customer');
             await loginAs(USER_ROLES.USER);
 
-            const dashboard = new DashboardPage(page);
-            await dashboard.verifyDashboardLoaded();
+            const home = new HomePage(page);
+            await home.verifyAuthenticated();
 
-            Logger.step('Step 2: Verify User role dashboard access');
-            // Note: In demo, User and Admin use same credentials
-            // In real scenarios, this would verify role-specific elements
-
-            Logger.info('✅ User role access verified');
+            Logger.info('✅ Customer role session verified');
         }
     );
 
     test(
-        'ROLE-002: Admin has full system access',
+        'ROLE-002: Admin session loads home',
         { tag: ['@regression', '@rbac'] },
-        async ({ loginAs, page }, testInfo) => {
-            testInfo.annotations.push(
-                { type: 'severity', description: 'normal' },
-                { type: 'feature', description: 'Role-Based Access Control' }
-            );
-
-            Logger.step('Step 1: Login as Admin');
+        async ({ loginAs, page }) => {
+            Logger.step('Step 1: Login as admin');
             await loginAs(USER_ROLES.ADMIN);
 
-            const dashboard = new DashboardPage(page);
-            await dashboard.verifyDashboardLoaded();
+            const home = new HomePage(page);
+            await home.verifyAuthenticated();
 
-            Logger.step('Step 2: Verify Admin dashboard access');
-            // Note: In production, this would verify admin-specific features
-
-            Logger.info('✅ Admin role access verified');
+            Logger.info('✅ Admin role session verified');
         }
     );
 });

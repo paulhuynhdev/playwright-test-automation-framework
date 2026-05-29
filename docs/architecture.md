@@ -35,9 +35,9 @@ into a sibling feature. This keeps changes localised and refactors safe.
 
 ```text
 config/
-  env.ts          # Strict .env loader: ENVIRONMENT + base URL + users
+  env.ts          # Strict .env loader: BASE_URL + USER_/ADMIN_ credentials
   browser.ts      # Viewport, action / navigation / expect / test timeouts
-  urls.ts         # Application route fragments
+  urls.ts         # Application route fragments (LOGIN, HOME, ACCOUNT, …)
 
 lib/
   data/
@@ -49,7 +49,7 @@ lib/
       app-constants.ts        # Storage path, timeouts, role permissions
 
   fixtures/
-    base.fixture.ts           # loginPage, dashboardPage (page objects only)
+    base.fixture.ts           # loginPage, homePage (page objects only)
     auth.fixture.ts           # loginAs(role), userPage, adminPage
     index.ts                  # mergeTests entry point
 
@@ -59,7 +59,7 @@ lib/
   pages/
     base/BasePage.ts          # goto, click, stableFill, expectVisible
     auth/LoginPage.ts
-    dashboard/DashboardPage.ts
+    home/HomePage.ts
 
   utils/
     Logger.ts                 # Timestamped, level-tagged console logging
@@ -69,7 +69,7 @@ lib/
 specs/
   setup/auth.setup.ts         # One-time login; persists storage state
   features/auth/login.spec.ts
-  features/dashboard/dashboard.spec.ts
+  features/home/home.spec.ts
 ```
 
 ---
@@ -100,7 +100,7 @@ Page Objects encapsulate the **structure and interactions** of a single screen.
     - `stableFill(locator, value)` — clears via real keyboard input, types
       sequentially, then asserts `toHaveValue` to prevent silent failures
     - `expectVisible` / `expectText` — thin wrappers over Playwright `expect`
-- **Concrete pages** (`LoginPage`, `DashboardPage`) declare locators as
+- **Concrete pages** (`LoginPage`, `HomePage`) declare locators as
   `readonly` fields and expose `async` actions / verifications.
 
 **Rule:** Page objects don't know about test data or env variables — they
@@ -115,7 +115,7 @@ underlying page objects. It is split into two files:
 
 | File                | Provides                                                              |
 | ------------------- | --------------------------------------------------------------------- |
-| `base.fixture.ts`   | `loginPage`, `dashboardPage` — page objects bound to the active page  |
+| `base.fixture.ts`   | `loginPage`, `homePage` — page objects bound to the active page       |
 | `auth.fixture.ts`   | `loginAs(role)`, `userPage`, `adminPage` — authenticated contexts     |
 | `index.ts`          | Merges both fixtures into a single `test` export                       |
 
@@ -135,8 +135,8 @@ shouldn't touch the base fixture.
 
 Cross-cutting **business assertions** that build on Playwright's `expect`.
 
-- `AssertionHelper.urlContains(page, partial)` — used by `DashboardPage`
-  to verify dashboard navigation.
+- `AssertionHelper.urlContains(page, partial)` — used by `HomePage`
+  to verify navigation.
 
 Helpers don't hold locators (that's the page object's job) and don't depend
 on env values (that's `config/`'s job). They glue the two together at the
@@ -174,7 +174,7 @@ and even then only outside CI (it short-circuits when `process.env.CI` is set).
 | Folder      | Contents                                                              |
 | ----------- | --------------------------------------------------------------------- |
 | `setup/`    | One-off setup specs (`*.setup.ts`) — run by the `setup-auth` project  |
-| `features/` | Business-readable specs grouped by module (`auth`, `dashboard`, …)    |
+| `features/` | Business-readable specs grouped by module (`auth`, `home`, …)         |
 
 Each test must:
 
@@ -254,7 +254,7 @@ artefact size small.
 | --------------------- | ------------------------------------------------------------------------- |
 | New module / page     | Add `lib/pages/<module>/<Page>.ts`, add route to `config/urls.ts`         |
 | New role              | Extend `USER_ROLES` + credentials in `.env` + map in `lib/data/users.ts`  |
-| New environment       | Add `<NAME>_*` vars in `.env` and update `VALID_ENVIRONMENTS` in `env.ts` |
+| New target host       | Override `BASE_URL` in `.env` (single-env loader — no prefix needed)      |
 | New fixture           | Add to `auth.fixture.ts` (auth-aware) or create a new `*.fixture.ts`     |
 | New shared assertion  | Add to `lib/helpers/AssertionHelper.ts`                                   |
 

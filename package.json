@@ -1,7 +1,7 @@
 {
   "name": "playwright-test-automation-framework",
-  "version": "1.0.0",
-  "description": "Enterprise-grade Playwright + TypeScript test automation framework with Page Object Model, role-based fixtures, Allure reporting, and a production-ready GitHub Actions pipeline. Reference implementation against the OrangeHRM open-source demo.",
+  "version": "0.1.0",
+  "description": "Playwright + TypeScript test automation framework targeting the Practice Software Testing (toolshop) demo. Page Object Model, role-based fixtures, Allure reporting, GitHub Actions pipeline.",
   "keywords": [
     "playwright",
     "typescript",
@@ -10,22 +10,23 @@
     "page-object-model",
     "allure",
     "github-actions",
-    "orangehrm",
+    "practicesoftwaretesting",
+    "toolshop",
     "qa",
     "framework"
   ],
-  "homepage": "https://github.com/aeshamangukiya/playwright-test-automation-framework#readme",
+  "homepage": "",
   "bugs": {
-    "url": "https://github.com/aeshamangukiya/playwright-test-automation-framework/issues"
+    "url": ""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aeshamangukiya/playwright-test-automation-framework.git"
+    "url": ""
   },
   "license": "MIT",
   "author": {
-    "name": "Aesha Mangukiya",
-    "url": "https://github.com/aeshamangukiya"
+    "name": "",
+    "url": ""
   },
   "engines": {
     "node": ">=20.0.0",

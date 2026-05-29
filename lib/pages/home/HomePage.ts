@@ -1,0 +1,56 @@
+import { Page, Locator } from '@playwright/test';
+import { BasePage } from '../base/BasePage';
+import { URLS } from '../../../config/urls';
+import { AssertionHelper } from '../../helpers/AssertionHelper';
+import { Logger } from '../../utils/Logger';
+import { MESSAGES } from '../../data/constants/messages';
+
+/**
+ * HomePage — Practice Software Testing toolshop
+ * Catalog landing page at `/`. Displays the product grid plus a
+ * search box and the top-nav sign-in entry point.
+ */
+export class HomePage extends BasePage {
+    private readonly productGrid: Locator;
+    private readonly searchInput: Locator;
+    private readonly searchSubmit: Locator;
+    private readonly navMenu: Locator;
+    private readonly signInLink: Locator;
+
+    constructor(page: Page) {
+        super(page);
+        this.productGrid = page.locator('[data-test="product-name"]');
+        this.searchInput = page.locator('[data-test="search-query"]');
+        this.searchSubmit = page.locator('[data-test="search-submit"]');
+        this.navMenu = page.locator('[data-test="nav-menu"]');
+        this.signInLink = page.locator('[data-test="nav-sign-in"]');
+    }
+
+    /* ---------------------------
+       Actions
+    ---------------------------- */
+
+    async open() {
+        await this.goto(URLS.HOME);
+    }
+
+    async search(term: string) {
+        await this.stableFill(this.searchInput, term);
+        await this.click(this.searchSubmit);
+    }
+
+    /* ---------------------------
+       Assertions
+    ---------------------------- */
+
+    async verifyHomeLoaded() {
+        await AssertionHelper.urlContains(this.page, URLS.HOME);
+        await this.expectVisible(this.productGrid.first());
+        Logger.success(MESSAGES.HOME_LOADED);
+    }
+
+    async verifyAuthenticated() {
+        // After login the top-nav exposes the username, not the sign-in link.
+        await this.expectVisible(this.navMenu);
+    }
+}

@@ -1,18 +1,19 @@
 /**
  * UI Constants
- * Contains: UI labels, button text, structural text
+ * Toolshop UI labels, button text, structural text.
  */
 export const UI_CONSTANTS = {
     BUTTONS: {
-        LOGIN: 'login',
-        SUBMIT: 'submit',
-        CANCEL: 'cancel',
+        LOGIN: 'Login',
+        REGISTER: 'Register',
+        SIGN_IN: 'Sign in',
     },
     LABELS: {
-        USERNAME: 'username',
-        PASSWORD: 'password',
+        EMAIL: 'Email address',
+        PASSWORD: 'Password',
     },
-    MENU_OPTIONS: {
-        ASSIGN_LEAVE: 'Assign Leave',
+    NAV: {
+        SIGN_IN: 'Sign in',
+        CATEGORIES: 'Categories',
     },
 } as const;

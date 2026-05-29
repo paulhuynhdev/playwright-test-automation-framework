@@ -95,7 +95,7 @@ body:
     attributes:
       label: Confirmations
       options:
-        - label: I searched the [existing issues](https://github.com/aeshamangukiya/playwright-test-automation-framework/issues) for duplicates.
+        - label: I searched the [existing issues](https://github.com/paulhuynhdev/playwright-test-automation-framework/issues) for duplicates.
           required: true
         - label: I have read the [CONTRIBUTING guide](../blob/master/CONTRIBUTING.md).
           required: true

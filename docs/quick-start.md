@@ -1,6 +1,6 @@
 # ⚡ Quick Start
 
-Get up and running in **under five minutes** against the OrangeHRM open-source demo.
+Get up and running in **under five minutes** against the Practice Software Testing (toolshop) demo.
 
 > 💡 If you need deeper environment configuration, jump to the [Setup Guide](setup-guide.md).
 
@@ -22,7 +22,7 @@ Get up and running in **under five minutes** against the OrangeHRM open-source d
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/aeshamangukiya/playwright-test-automation-framework.git
+git clone https://github.com/paulhuynhdev/playwright-test-automation-framework.git
 cd playwright-test-automation-framework
 ```
 
@@ -51,16 +51,17 @@ copy .env.example .env
 cp .env.example .env
 ```
 
-Defaults already point to the public OrangeHRM demo:
+Defaults already point to the public Practice Software Testing demo:
 
 ```env
-ENVIRONMENT=staging
-STAGING_BASE_URL=https://opensource-demo.orangehrmlive.com
-STAGING_USER_USERNAME=Admin
-STAGING_USER_PASSWORD=admin123
-STAGING_ADMIN_USERNAME=Admin
-STAGING_ADMIN_PASSWORD=admin123
+BASE_URL=https://practicesoftwaretesting.com
+USER_EMAIL=customer@practicesoftwaretesting.com
+USER_PASSWORD=welcome01
+ADMIN_EMAIL=admin@practicesoftwaretesting.com
+ADMIN_PASSWORD=welcome01
 ```
+
+Demo credentials are public and reset nightly by the toolshop project.
 
 ### 5. Run your first tests
 
@@ -116,11 +117,11 @@ lib/
   data/        users + constants (roles, messages, ui, app)
   fixtures/    base + auth fixtures (loginAs, userPage, adminPage)
   helpers/     business-level assertions
-  pages/       Page Objects (Base, Login, Dashboard)
+  pages/       Page Objects (Base, Login, Home)
   utils/       Logger, Wait, DataGenerator
 specs/
   setup/       auth.setup.ts — captures storage state once
-  features/    business-readable specs (auth, dashboard, …)
+  features/    business-readable specs (auth, home, …)
 ```
 
 Deep dive → [docs/architecture.md](architecture.md).
@@ -133,7 +134,7 @@ Deep dive → [docs/architecture.md](architecture.md).
 | ----------------------------------------------- | ------------------------------------------------------------------ |
 | `browser not found` / `Failed to launch`        | `npx playwright install --with-deps chromium`                      |
 | `Missing required environment variable: …`      | Copy `.env.example` to `.env` and fill in the value                |
-| Tests time out connecting to OrangeHRM          | Verify you have internet access; the demo target is hosted publicly |
+| Tests time out connecting to Practice Software Testing          | Verify you have internet access; the demo target is hosted publicly |
 | Allure CLI says `Java not found`                | Install Java 8+ (Allure requires a JRE)                            |
 
 More detail in [docs/troubleshooting.md](troubleshooting.md).

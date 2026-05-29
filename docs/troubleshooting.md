@@ -1,16 +1,15 @@
 # 🆘 Troubleshooting
 
 Common problems, root causes, and fixes. If your issue isn't here, please
-[open a bug report](https://github.com/aeshamangukiya/playwright-test-automation-framework/issues/new/choose).
+[open a bug report](https://github.com/paulhuynhdev/playwright-test-automation-framework/issues/new/choose).
 
 ---
 
 ## Setup
 
-### `Missing required environment variable: STAGING_BASE_URL`
+### `Missing required environment variable: BASE_URL`
 
-**Cause:** `.env` is missing or doesn't contain values for the active
-`ENVIRONMENT` prefix.
+**Cause:** `.env` is missing or doesn't contain the required key.
 
 **Fix:**
 
@@ -19,15 +18,7 @@ cp .env.example .env
 # Then edit .env if you need non-default values
 ```
 
-If you're targeting production, ensure every `PRODUCTION_*` variable is set.
-
----
-
-### `Invalid ENVIRONMENT: "<value>"`
-
-**Cause:** `ENVIRONMENT` in `.env` is not one of `staging` / `production`.
-
-**Fix:** Set `ENVIRONMENT=staging` (or `production`) in `.env`.
+All five variables (`BASE_URL`, `USER_EMAIL`, `USER_PASSWORD`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`) must be set.
 
 ---
 
@@ -47,13 +38,13 @@ On Linux runners, you may need `--with-deps` to also install OS libraries.
 
 ## Running tests
 
-### Tests time out reaching `opensource-demo.orangehrmlive.com`
+### Tests time out reaching `practicesoftwaretesting.com`
 
 **Cause:** No internet access or the demo target is temporarily down.
 
-**Fix:** Verify connectivity with `curl -I https://opensource-demo.orangehrmlive.com`.
-If the site is down, retry later or point at your own OrangeHRM instance via
-`STAGING_BASE_URL`.
+**Fix:** Verify connectivity with `curl -I https://practicesoftwaretesting.com`.
+If the site is down, retry later or point at your own Practice Software Testing instance via
+`BASE_URL`.
 
 ---
 
@@ -99,7 +90,7 @@ some UI elements collapse below specific widths.
 → Don't pass `--project=authenticated` in isolation; let Playwright resolve
 dependencies.
 
-**Cause #3: Network jitter.** OrangeHRM demo can be slow.
+**Cause #3: Network jitter.** Practice Software Testing demo can be slow.
 → Use `Wait.*` helpers and the per-call `timeout` option; avoid global bumps.
 
 ---
@@ -162,6 +153,6 @@ GitHub Actions on the repo.
 
 ## Need more help?
 
-- Search [open issues](https://github.com/aeshamangukiya/playwright-test-automation-framework/issues).
-- Ask in [Discussions](https://github.com/aeshamangukiya/playwright-test-automation-framework/discussions).
-- File a bug using the [Bug Report template](https://github.com/aeshamangukiya/playwright-test-automation-framework/issues/new?template=bug_report.yml).
+- Search [open issues](https://github.com/paulhuynhdev/playwright-test-automation-framework/issues).
+- Ask in [Discussions](https://github.com/paulhuynhdev/playwright-test-automation-framework/discussions).
+- File a bug using the [Bug Report template](https://github.com/paulhuynhdev/playwright-test-automation-framework/issues/new?template=bug_report.yml).

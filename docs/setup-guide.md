@@ -24,7 +24,7 @@ see [Quick Start](quick-start.md).
 ## 2. Install
 
 ```bash
-git clone https://github.com/aeshamangukiya/playwright-test-automation-framework.git
+git clone https://github.com/paulhuynhdev/playwright-test-automation-framework.git
 cd playwright-test-automation-framework
 npm install
 npx playwright install --with-deps chromium
@@ -41,28 +41,20 @@ required OS dependencies (`--with-deps` is recommended on Linux runners).
 The framework refuses to start if any required variable is missing — this is
 intentional and prevents silent misconfiguration.
 
-### 3.1 Choose the active environment
+### 3.1 Single-environment configuration
+
+The loader uses a single `BASE_URL` and one set of credentials — no
+`STAGING_*` / `PRODUCTION_*` prefixes. Override per-run via shell env vars or
+CI secrets when targeting a different deployment.
+
+### 3.2 Provide values
 
 ```env
-ENVIRONMENT=staging      # or `production`
-```
-
-### 3.2 Provide values for the active environment
-
-Every variable must be prefixed with `STAGING_` or `PRODUCTION_`:
-
-```env
-STAGING_BASE_URL=https://opensource-demo.orangehrmlive.com
-STAGING_USER_USERNAME=Admin
-STAGING_USER_PASSWORD=admin123
-STAGING_ADMIN_USERNAME=Admin
-STAGING_ADMIN_PASSWORD=admin123
-
-PRODUCTION_BASE_URL=https://your-own-instance.example.com
-PRODUCTION_USER_USERNAME=…
-PRODUCTION_USER_PASSWORD=…
-PRODUCTION_ADMIN_USERNAME=…
-PRODUCTION_ADMIN_PASSWORD=…
+BASE_URL=https://practicesoftwaretesting.com
+USER_EMAIL=customer@practicesoftwaretesting.com
+USER_PASSWORD=welcome01
+ADMIN_EMAIL=admin@practicesoftwaretesting.com
+ADMIN_PASSWORD=welcome01
 ```
 
 > ⚠️ `.env` is git-ignored and **must not be committed**. Use GitHub Actions
@@ -94,8 +86,8 @@ Swapping the target application is a four-step process:
 
 | Step | File                                       | Action                                              |
 | ---- | ------------------------------------------ | --------------------------------------------------- |
-| 1    | `.env` / `.env.example`                    | Update `*_BASE_URL` and credential variables        |
-| 2    | `config/urls.ts`                           | Replace route fragments (`LOGIN`, `DASHBOARD`, …)   |
+| 1    | `.env` / `.env.example`                    | Update `BASE_URL` and credential variables          |
+| 2    | `config/urls.ts`                           | Replace route fragments (`LOGIN`, `HOME`, …)        |
 | 3    | `lib/pages/**`                             | Update locators / extend page objects               |
 | 4    | `specs/**`                                 | Update spec wording, tags, and test IDs             |
 
@@ -111,11 +103,11 @@ For private targets, configure these GitHub Actions secrets under
 
 | Secret                       | Notes                                                           |
 | ---------------------------- | --------------------------------------------------------------- |
-| `STAGING_BASE_URL`           | Optional — defaults to the public OrangeHRM demo                |
-| `STAGING_USER_USERNAME`      | Optional — defaults to `Admin`                                  |
-| `STAGING_USER_PASSWORD`      | Optional — defaults to `admin123`                               |
-| `STAGING_ADMIN_USERNAME`     | Optional — defaults to `Admin`                                  |
-| `STAGING_ADMIN_PASSWORD`     | Optional — defaults to `admin123`                               |
+| `BASE_URL`       | Optional — defaults to `https://practicesoftwaretesting.com`            |
+| `USER_EMAIL`     | Optional — defaults to `customer@practicesoftwaretesting.com`           |
+| `USER_PASSWORD`  | Optional — defaults to `welcome01`                                      |
+| `ADMIN_EMAIL`    | Optional — defaults to `admin@practicesoftwaretesting.com`              |
+| `ADMIN_PASSWORD` | Optional — defaults to `welcome01`                                      |
 
 All workflows fall back to the demo defaults when secrets are absent, so the
 project works out-of-the-box on forks.

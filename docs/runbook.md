@@ -93,17 +93,18 @@ npx playwright test --project=unauthenticated
 
 ---
 
-## Environment switching
+## Targeting a different deployment
+
+The loader uses a single `BASE_URL` plus four credential variables. Override at the command line to point at any toolshop instance:
 
 ```bash
-# Staging (default)
-ENVIRONMENT=staging npm test
-
-# Production (must have PRODUCTION_* values set in .env)
-ENVIRONMENT=production npm test
+BASE_URL=https://your-toolshop.example.com \
+USER_EMAIL=you@example.com \
+USER_PASSWORD=secret \
+npm test
 ```
 
-If `ENVIRONMENT` is missing or invalid, `config/env.ts` throws immediately.
+If any of `BASE_URL`, `USER_EMAIL`, `USER_PASSWORD`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` is missing, `config/env.ts` throws immediately.
 
 ---
 

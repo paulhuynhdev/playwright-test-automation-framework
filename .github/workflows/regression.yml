@@ -7,13 +7,6 @@ on:
     # Daily at 02:30 UTC — keeps the demo target verified
     - cron: '30 2 * * *'
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target environment'
-        required: true
-        default: 'staging'
-        type: choice
-        options: [staging, production]
 
 concurrency:
   group: regression-${{ github.ref }}
@@ -21,9 +14,6 @@ concurrency:
 
 permissions:
   contents: read
-
-env:
-  ENVIRONMENT: ${{ inputs.environment || 'staging' }}
 
 jobs:
   regression:
@@ -71,12 +61,11 @@ jobs:
       - name: Run regression shard
         env:
           CI: true
-          ENVIRONMENT: ${{ env.ENVIRONMENT }}
-          STAGING_BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://opensource-demo.orangehrmlive.com' }}
-          STAGING_USER_USERNAME: ${{ secrets.STAGING_USER_USERNAME || 'Admin' }}
-          STAGING_USER_PASSWORD: ${{ secrets.STAGING_USER_PASSWORD || 'admin123' }}
-          STAGING_ADMIN_USERNAME: ${{ secrets.STAGING_ADMIN_USERNAME || 'Admin' }}
-          STAGING_ADMIN_PASSWORD: ${{ secrets.STAGING_ADMIN_PASSWORD || 'admin123' }}
+          BASE_URL: ${{ secrets.BASE_URL || 'https://practicesoftwaretesting.com' }}
+          USER_EMAIL: ${{ secrets.USER_EMAIL || 'customer@practicesoftwaretesting.com' }}
+          USER_PASSWORD: ${{ secrets.USER_PASSWORD || 'welcome01' }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL || 'admin@practicesoftwaretesting.com' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'welcome01' }}
         run: npx playwright test --grep @regression --shard=${{ matrix.shard }}/${{ env.SHARD_TOTAL }}
 
       - name: Upload Playwright HTML report (shard)
@@ -147,7 +136,6 @@ jobs:
             echo "";
             echo "| Item | Value |";
             echo "| ---- | ----- |";
-            echo "| Environment | \`${{ env.ENVIRONMENT }}\` |";
             echo "| Trigger | \`${{ github.event_name }}\` |";
             echo "| Branch / ref | \`${{ github.ref_name }}\` |";
             echo "| Commit | \`${{ github.sha }}\` |";

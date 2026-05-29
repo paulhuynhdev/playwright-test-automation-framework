@@ -19,7 +19,7 @@ severity, and intent — so it stays readable as the suite grows.
 | Validation       | 3     |
 | RBAC             | 2     |
 
-Approximate execution time on a single worker against the OrangeHRM demo:
+Approximate execution time on a single worker against the Practice Software Testing demo:
 
 | Suite            | Tests | Duration       |
 | ---------------- | ----- | -------------- |
@@ -79,30 +79,21 @@ CI shards regression across two runners, cutting wall-clock time roughly in half
 
 ---
 
-## Dashboard (`specs/features/dashboard/dashboard.spec.ts`)
+## Home — catalog landing (`specs/features/home/home.spec.ts`)
 
-### User role
+### Common (anonymous)
 
-| Test ID    | Title                                                  | Tags                  | Severity |
-| ---------- | ------------------------------------------------------ | --------------------- | -------- |
-| `DASH-001` | User can access dashboard successfully                 | `@smoke @regression`  | Critical |
-| `DASH-002` | User dashboard displays Assign Leave option            | `@smoke @regression`  | Normal   |
-| `DASH-003` | User can navigate to dashboard directly                | `@regression`         | Normal   |
+| Test ID    | Title                                                | Tags                  | Severity |
+| ---------- | ---------------------------------------------------- | --------------------- | -------- |
+| `HOME-001` | Home page loads and displays product grid            | `@smoke @regression`  | Critical |
+| `HOME-002` | Product search returns results                        | `@regression`         | Normal   |
 
-### Admin role
+### Authenticated
 
-| Test ID    | Title                                                  | Tags                  | Severity |
-| ---------- | ------------------------------------------------------ | --------------------- | -------- |
-| `DASH-101` | Admin can access dashboard successfully                | `@smoke @regression`  | Critical |
-| `DASH-102` | Admin dashboard displays Assign Leave option           | `@smoke @regression`  | Normal   |
-| `DASH-103` | Admin can navigate to dashboard directly               | `@regression`         | Normal   |
-
-### Common
-
-| Test ID    | Title                                       | Tags                  | Severity |
-| ---------- | ------------------------------------------- | --------------------- | -------- |
-| `DASH-201` | Dashboard Assign Leave option is visible    | `@smoke @regression`  | Normal   |
-| `DASH-202` | Dashboard loads after login                 | `@regression`         | Normal   |
+| Test ID    | Title                                                | Tags                  | Severity |
+| ---------- | ---------------------------------------------------- | --------------------- | -------- |
+| `HOME-101` | Customer sees authenticated nav on home              | `@smoke @regression`  | Critical |
+| `HOME-102` | Admin sees authenticated nav on home                 | `@smoke @regression`  | Critical |
 
 ---
 

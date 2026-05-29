@@ -4,16 +4,16 @@
 # =============================================================================
 
 # Default owner for everything in the repo
-*                                @aeshamangukiya
+*                                @paulhuynhdev
 
 # CI / workflows
-/.github/                        @aeshamangukiya
+/.github/                        @paulhuynhdev
 
 # Framework core
-/lib/                            @aeshamangukiya
-/config/                         @aeshamangukiya
-/playwright.config.ts            @aeshamangukiya
+/lib/                            @paulhuynhdev
+/config/                         @paulhuynhdev
+/playwright.config.ts            @paulhuynhdev
 
 # Documentation
-/docs/                           @aeshamangukiya
-README.md                        @aeshamangukiya
+/docs/                           @paulhuynhdev
+README.md                        @paulhuynhdev

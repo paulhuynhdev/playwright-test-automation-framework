@@ -1,12 +1,12 @@
 <h1 align="center">Playwright Test Automation Framework</h1>
 
 <p align="center">
-  <em>Enterprise-grade end-to-end test automation for the <a href="https://opensource-demo.orangehrmlive.com">OrangeHRM</a> open-source demo, built on Playwright + TypeScript with a strict Page Object Model architecture.</em>
+  <em>Enterprise-grade end-to-end test automation for the <a href="https://practicesoftwaretesting.com">Practice Software Testing</a> open-source demo, built on Playwright + TypeScript with a strict Page Object Model architecture.</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/aeshamangukiya/playwright-test-automation-framework/actions/workflows/smoke.yml"><img src="https://img.shields.io/github/actions/workflow/status/aeshamangukiya/playwright-test-automation-framework/smoke.yml?branch=master&label=smoke&logo=github" alt="Smoke" /></a>
-  <a href="https://github.com/aeshamangukiya/playwright-test-automation-framework/actions/workflows/regression.yml"><img src="https://img.shields.io/github/actions/workflow/status/aeshamangukiya/playwright-test-automation-framework/regression.yml?branch=master&label=regression&logo=github" alt="Regression" /></a>
+  <a href="https://github.com/paulhuynhdev/playwright-test-automation-framework/actions/workflows/smoke.yml"><img src="https://img.shields.io/github/actions/workflow/status/paulhuynhdev/playwright-test-automation-framework/smoke.yml?branch=master&label=smoke&logo=github" alt="Smoke" /></a>
+  <a href="https://github.com/paulhuynhdev/playwright-test-automation-framework/actions/workflows/regression.yml"><img src="https://img.shields.io/github/actions/workflow/status/paulhuynhdev/playwright-test-automation-framework/regression.yml?branch=master&label=regression&logo=github" alt="Regression" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
   <img src="https://img.shields.io/badge/node-%E2%89%A520.x-339933?logo=node.js" alt="Node 20+" />
   <img src="https://img.shields.io/badge/playwright-1.57+-45ba4b?logo=playwright" alt="Playwright" />
@@ -52,7 +52,7 @@ This repository is a **production-grade reference implementation** of a Playwrig
 test framework. It is designed to be cloned, studied, and adapted by teams that
 want enterprise-style architecture without starting from scratch.
 
-It targets the **OrangeHRM open-source demo** ( `https://opensource-demo.orangehrmlive.com` )
+It targets the **Practice Software Testing (toolshop) demo** ( `https://practicesoftwaretesting.com` )
 because it offers stable, public, role-based functionality — but every layer
 (config, pages, fixtures, helpers, CI) is generic and swap-friendly for any
 other application under test.
@@ -94,7 +94,7 @@ other application under test.
 
 ```bash
 # 1. Clone
-git clone https://github.com/aeshamangukiya/playwright-test-automation-framework.git
+git clone https://github.com/paulhuynhdev/playwright-test-automation-framework.git
 cd playwright-test-automation-framework
 
 # 2. Install dependencies + browsers (requires Node 20+)
@@ -123,7 +123,7 @@ playwright-test-automation-framework/
 │   ├── CODEOWNERS
 │   └── dependabot.yml
 ├── config/
-│   ├── env.ts                 # Strict env loader (.env + ENVIRONMENT)
+│   ├── env.ts                 # Strict env loader (.env single-env)
 │   ├── browser.ts             # Viewport + timeouts
 │   └── urls.ts                # Application route fragments
 ├── lib/
@@ -138,11 +138,11 @@ playwright-test-automation-framework/
 │   ├── pages/
 │   │   ├── base/              # BasePage with stable primitives
 │   │   ├── auth/              # LoginPage
-│   │   └── dashboard/         # DashboardPage
+│   │   └── home/              # HomePage (catalog landing)
 │   └── utils/                 # Logger, Wait, DataGenerator
 ├── specs/
 │   ├── setup/                 # auth.setup.ts — persists storage state
-│   └── features/              # Business-readable specs (auth, dashboard, …)
+│   └── features/              # Business-readable specs (auth, home, …)
 ├── docs/                      # Quick Start, Architecture, Runbook, Troubleshooting…
 ├── playwright.config.ts       # Projects, reporters, baseURL
 ├── tsconfig.json              # Strict TS config with path aliases
@@ -231,9 +231,9 @@ test('user can log in', async ({ loginAs, page }) => {
 
 Available fixtures:
 
-- `loginPage`, `dashboardPage` — ready-to-use page objects
+- `loginPage`, `homePage` — ready-to-use page objects
 - `loginAs(role)` — programmatic login for any `USER_ROLES.*`
-- `userPage`, `adminPage` — `DashboardPage` pre-authenticated as that role
+- `userPage`, `adminPage` — `HomePage` pre-authenticated as that role
 
 Credentials are sourced from `.env` via `config/env.ts` → `lib/data/users.ts`.
 **Specs never touch `process.env` directly.**
@@ -246,12 +246,12 @@ Credentials are sourced from `.env` via `config/env.ts` → `lib/data/users.ts`.
 
 ```ts
 test(
-    'USER-001: User logs in with valid credentials',
+    'USER-001: Customer logs in with valid credentials',
     { tag: ['@smoke', '@regression', '@critical'] },
     async ({ loginAs, page }) => {
         await loginAs(USER_ROLES.USER);
-        const dashboard = new DashboardPage(page);
-        await dashboard.verifyDashboardLoaded();
+        const home = new HomePage(page);
+        await home.verifyAuthenticated();
     },
 );
 ```
@@ -260,24 +260,24 @@ test(
 
 ```ts
 test(
-    'AUTH-101: Login fails with invalid username',
+    'AUTH-101: Login fails with invalid email',
     { tag: ['@regression', '@negative'] },
     async ({ loginPage }) => {
         await loginPage.openLoginPage();
-        await loginPage.login('InvalidUser', 'admin123');
+        await loginPage.login('nobody@example.com', 'welcome01');
         await loginPage.verifyErrorMessage(MESSAGES.LOGIN_FAILED);
     },
 );
 ```
 
-### 🛡️ Role-based — admin dashboard
+### 🛡️ Role-based — admin landing
 
 ```ts
 test(
-    'DASH-101: Admin can access dashboard',
+    'HOME-102: Admin sees authenticated nav on home',
     { tag: ['@smoke', '@regression'] },
     async ({ adminPage }) => {
-        await adminPage.verifyDashboardLoaded();
+        await adminPage.verifyAuthenticated();
     },
 );
 ```
@@ -326,7 +326,6 @@ environment; demo defaults are used otherwise.
 | [Test Coverage](docs/test-coverage.md)    | What is tested, which tags map to which IDs  |
 | [Runbook](docs/runbook.md)                | Picking the right command for a scenario     |
 | [Troubleshooting](docs/troubleshooting.md)| A test failed or the suite won't start       |
-| [CHANGELOG](CHANGELOG.md)                 | Release notes                                |
 
 ---
 
@@ -342,7 +341,7 @@ the [Code of Conduct](CODE_OF_CONDUCT.md).
 ## Security
 
 Please report vulnerabilities privately via
-[GitHub Security Advisories](https://github.com/aeshamangukiya/playwright-test-automation-framework/security/advisories/new).
+[GitHub Security Advisories](https://github.com/paulhuynhdev/playwright-test-automation-framework/security/advisories/new).
 Full disclosure policy in [`SECURITY.md`](SECURITY.md).
 
 ---
@@ -351,8 +350,8 @@ Full disclosure policy in [`SECURITY.md`](SECURITY.md).
 
 Released under the [MIT License](LICENSE).
 
-> The OrangeHRM trademark and its open-source demo are property of their
+> The Practice Software Testing trademark and its open-source demo are property of their
 > respective owners. This repository is an independent test automation
-> reference and is not affiliated with or endorsed by OrangeHRM Inc.
+> reference and is not affiliated with or endorsed by Practice Software Testing Inc.
 
 <p align="center"><sub>Built with ❤️ for the QA engineering community.</sub></p>

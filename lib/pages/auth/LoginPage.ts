@@ -1,19 +1,25 @@
 import { Page, Locator } from '@playwright/test';
 import { BasePage } from '../base/BasePage';
 import { ENV } from '../../../config/env';
-import { MESSAGES } from '../../data/constants/messages';
+import { URLS } from '../../../config/urls';
 
+/**
+ * LoginPage — Practice Software Testing toolshop
+ * Login form at `/auth/login`. Uses Playwright-friendly `data-test`
+ * selectors exposed by the application.
+ */
 export class LoginPage extends BasePage {
-    private readonly usernameInput: Locator;
+    private readonly emailInput: Locator;
     private readonly passwordInput: Locator;
-    private readonly logInButton: Locator;
+    private readonly loginSubmit: Locator;
+    private readonly errorAlert: Locator;
 
     constructor(page: Page) {
         super(page);
-
-        this.usernameInput = page.getByRole('textbox', { name: 'username' });
-        this.passwordInput = page.getByRole('textbox', { name: 'password' });
-        this.logInButton = page.getByRole('button', { name: /login/i });
+        this.emailInput = page.locator('[data-test="email"]');
+        this.passwordInput = page.locator('[data-test="password"]');
+        this.loginSubmit = page.locator('[data-test="login-submit"]');
+        this.errorAlert = page.locator('[data-test="login-error"]');
     }
 
     /* ---------------------------
@@ -21,15 +27,13 @@ export class LoginPage extends BasePage {
     ---------------------------- */
 
     async openLoginPage() {
-        await this.goto(ENV.BASE_URL);
+        await this.goto(`${ENV.BASE_URL}${URLS.LOGIN}`);
     }
 
-    async login(username: string, password: string) {
-        await this.stableFill(this.usernameInput, username);
+    async login(email: string, password: string) {
+        await this.stableFill(this.emailInput, email);
         await this.stableFill(this.passwordInput, password);
-
-        // Real user submit
-        await this.click(this.logInButton);
+        await this.click(this.loginSubmit);
     }
 
     /* ---------------------------
@@ -37,12 +41,7 @@ export class LoginPage extends BasePage {
     ---------------------------- */
 
     async verifyErrorMessage(expectedMessage: string) {
-        if (expectedMessage === 'Invalid credentials') {
-            await this.expectVisible(this.page.getByRole('alert'));
-            await this.expectText(this.page.getByRole('alert'), expectedMessage);
-        } else {
-            // For empty fields, OrangeHRM shows "Required" under the field
-            await this.expectVisible(this.page.getByText(expectedMessage).first());
-        }
+        await this.expectVisible(this.errorAlert);
+        await this.expectText(this.errorAlert, expectedMessage);
     }
 }

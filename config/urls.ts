@@ -1,15 +1,11 @@
 /**
  * Centralized URL Configuration
- * Contains: Application routes and external URLs
+ * Routes for the Practice Software Testing toolshop demo.
  */
 export const URLS = {
-    // Auth
-    LOGIN: '/web/index.php/auth/login',
-
-    // Dashboard
-    DASHBOARD: '/web/index.php/dashboard/index',
-
-    // Modules
-    PIM: '/web/index.php/pim/viewEmployeeList',
-    LEAVE: '/web/index.php/leave/viewLeaveList',
+    HOME: '/',
+    LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
+    ACCOUNT: '/account',
+    CHECKOUT: '/checkout',
 } as const;

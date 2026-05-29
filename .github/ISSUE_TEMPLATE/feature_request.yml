@@ -36,5 +36,5 @@ body:
     attributes:
       label: Confirmations
       options:
-        - label: I searched the [existing issues](https://github.com/aeshamangukiya/playwright-test-automation-framework/issues) and there is no duplicate.
+        - label: I searched the [existing issues](https://github.com/paulhuynhdev/playwright-test-automation-framework/issues) and there is no duplicate.
           required: true
