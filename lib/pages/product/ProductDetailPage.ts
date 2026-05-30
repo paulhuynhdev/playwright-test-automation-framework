@@ -64,6 +64,10 @@ export class ProductDetailPage extends BasePage {
         await this.expectVisible(this.productName);
     }
 
+    async getProductName(): Promise<string> {
+        return (await this.productName.textContent())?.trim() ?? '';
+    }
+
     async increaseQuantity(times = 1) {
         for (let i = 0; i < times; i++) await this.click(this.increaseQtyBtn);
     }

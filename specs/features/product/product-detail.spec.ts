@@ -1,15 +1,15 @@
 import { test, expect } from '../../../lib/fixtures';
 import { ProductDetailPage } from '../../../lib/pages/product/ProductDetailPage';
+import { HomePage } from '../../../lib/pages/home/HomePage';
 import { Logger } from '../../../lib/utils/Logger';
 
 /**
  * Product Detail (PROD-001..005) — funnel entry: cart/checkout depend on these.
  * `@ai-generated` until human-reviewed; see docs/test-coverage.md.
+ *
+ * Products are resolved at runtime via the live grid (the toolshop demo reseeds, so product
+ * IDs rotate) — never hardcode an :id.
  */
-
-const PRODUCT_COMBINATION_PLIERS = '01KST408Y53SANVB9RHWK8221K';
-const PRODUCT_THOR_HAMMER = '01KST408YNXNY444KZEREY1K6N';
-const THOR_HAMMER_NAME = 'Thor Hammer';
 
 test.describe('Product Detail', () => {
     test(
@@ -49,10 +49,11 @@ test.describe('Product Detail', () => {
                 { type: 'feature', description: 'Product Detail' },
                 { type: 'story', description: 'PROD-002: Add to cart' }
             );
-            void userPage; // activates the authenticated customer session
 
-            Logger.step('Step 1: Open the product detail page');
-            await productDetailPage.open(PRODUCT_COMBINATION_PLIERS);
+            Logger.step('Step 1: Open the first live product (authenticated)');
+            await userPage.open();
+            await userPage.openFirstProduct();
+            await productDetailPage.waitForLoaded();
 
             Logger.step('Step 2: Capture the current cart badge count');
             // Assert increment vs baseline, not a hard "1" — the reused session may carry a cart.
@@ -69,15 +70,17 @@ test.describe('Product Detail', () => {
     test(
         'PROD-003: Increase/decrease quantity adjusts qty before add',
         { tag: ['@regression', '@ai-generated'] },
-        async ({ productDetailPage }, testInfo) => {
+        async ({ homePage, productDetailPage }, testInfo) => {
             testInfo.annotations.push(
                 { type: 'severity', description: 'normal' },
                 { type: 'feature', description: 'Product Detail' },
                 { type: 'story', description: 'PROD-003: Quantity controls' }
             );
 
-            Logger.step('Step 1: Open the product detail page');
-            await productDetailPage.open(PRODUCT_COMBINATION_PLIERS);
+            Logger.step('Step 1: Open the first live product');
+            await homePage.open();
+            await homePage.openFirstProduct();
+            await productDetailPage.waitForLoaded();
             await productDetailPage.expectQuantity('1');
 
             Logger.step('Step 2: Increase quantity twice → 3');
@@ -105,10 +108,12 @@ test.describe('Product Detail', () => {
                 { type: 'feature', description: 'Product Detail' },
                 { type: 'story', description: 'PROD-004: Add to favorites' }
             );
-            void userPage;
 
-            Logger.step('Step 1: Open the product detail page');
-            await productDetailPage.open(PRODUCT_THOR_HAMMER);
+            Logger.step('Step 1: Open the first live product (authenticated)');
+            await userPage.open();
+            await userPage.openFirstProduct();
+            await productDetailPage.waitForLoaded();
+            const productName = await productDetailPage.getProductName();
             await productDetailPage.verifyAddToFavoritesVisible();
 
             Logger.step('Step 2: Add to favorites and verify the API succeeded');
@@ -119,7 +124,7 @@ test.describe('Product Detail', () => {
 
             Logger.step('Step 3: Verify the product persists on the favorites page');
             await favoritesPage.open();
-            await favoritesPage.verifyProductListed(THOR_HAMMER_NAME);
+            await favoritesPage.verifyProductListed(productName);
 
             Logger.info('✅ Favorite persisted to the account');
         }
@@ -139,10 +144,13 @@ test.describe('Product Detail', () => {
             const context = await browser.newContext({ storageState: undefined });
             const page = await context.newPage();
             try {
+                const homePage = new HomePage(page);
                 const productDetailPage = new ProductDetailPage(page);
 
-                Logger.step('Step 1: Open the product detail page anonymously');
-                await productDetailPage.open(PRODUCT_COMBINATION_PLIERS);
+                Logger.step('Step 1: Open the first live product anonymously');
+                await homePage.open();
+                await homePage.openFirstProduct();
+                await productDetailPage.waitForLoaded();
                 await productDetailPage.verifyAddToFavoritesVisible();
 
                 Logger.step('Step 2: Add to favorites → server rejects with 401');
